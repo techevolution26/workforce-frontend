@@ -13,8 +13,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function NewJobPage() {
+
+    const user = useAuthStore((s) => s.user);
+
+    if (user?.role !== "employer" && user?.role !== "admin") {
+        return (
+            <Card>
+                <p className="text-sm text-neutral-600">
+                    You do not have access to create jobs.
+                </p>
+            </Card>
+        );
+    }
+
     const router = useRouter();
     const token = getToken();
     const [serverError, setServerError] = useState("");

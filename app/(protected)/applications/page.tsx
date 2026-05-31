@@ -29,7 +29,10 @@ export default function ApplicationsPage() {
     };
 
     useEffect(() => {
-        load();
+        const loadAssignments = async () => {
+            await load();
+        };
+        loadAssignments();
     }, [token]);
 
     async function runAction(

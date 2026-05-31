@@ -172,3 +172,17 @@ export function deleteAvailabilityBlock(availabilityBlockId: number, token?: str
     token,
   });
 }
+
+export function getEmployerProfile(token?: string | null) {
+  return apiFetch<EmployerProfile>("/employers/me/profile", {
+    method: "GET",
+    token,
+  });
+}
+
+export function getWorkerProfile(token?: string | null) {
+  return apiFetch<WorkerProfile>("/workers/me/profile", {
+    method: "GET",
+    token,
+  });
+}
