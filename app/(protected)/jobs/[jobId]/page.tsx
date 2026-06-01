@@ -16,6 +16,7 @@ import type { Job } from "@/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { WorkerPicker } from "@/components/workers/worker-picker";
 
 export default function JobDetailsPage() {
     const params = useParams<{ jobId: string }>();
@@ -91,25 +92,16 @@ export default function JobDetailsPage() {
             </Card>
 
             <Card className="space-y-4">
-                <h2 className="text-lg font-semibold">Employer action</h2>
-                <p className="text-sm text-neutral-600">
-                    Assign a worker by worker profile ID.
-                </p>
-                <Input
-                    placeholder="Worker profile ID"
-                    value={workerProfileId}
-                    onChange={(e) => setWorkerProfileId(e.target.value)}
-                />
-                <Button
-                    className="w-full"
-                    onClick={() => run(() => assignWorkerToJob(job.id, Number(workerProfileId), token))}
-                >
-                    Assign worker
-                </Button>
-
-                <p className="text-xs text-neutral-500">
-                    This will later become a searchable picker with availability and skill matching.
-                </p>
+                {isEmployer ? (
+                    <WorkerPicker
+                        jobId={job.id}
+                        onAssigned={() => {
+                            getJob(Number(params.jobId))
+                                .then(setJob)
+                                .catch((err) => setMessage(err instanceof Error ? err.message : "Failed to load job"));
+                        }}
+                    />
+                ) : null}
             </Card>
         </div>
     );

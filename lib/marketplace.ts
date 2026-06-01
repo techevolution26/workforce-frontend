@@ -29,6 +29,15 @@ export interface AvailabilityBlockPayload {
   active?: boolean;
 }
 
+export interface WorkerSearchParams {
+  q?: string;
+  skill_id?: number;
+  location_text?: string;
+  availability_status?: string;
+  limit?: number;
+  offset?: number;
+}
+
 export function getSkills() {
   return apiFetch<Skill[]>("/skills");
 }
@@ -182,6 +191,50 @@ export function getEmployerProfile(token?: string | null) {
 
 export function getWorkerProfile(token?: string | null) {
   return apiFetch<WorkerProfile>("/workers/me/profile", {
+    method: "GET",
+    token,
+  });
+}
+
+
+export function searchWorkers(params: WorkerSearchParams = {}, token?: string | null) {
+  const query = new URLSearchParams();
+
+  if (params.q) query.set("q", params.q);
+  if (params.skill_id !== undefined) query.set("skill_id", String(params.skill_id));
+  if (params.location_text) query.set("location_text", params.location_text);
+  if (params.availability_status) query.set("availability_status", params.availability_status);
+  if (params.limit !== undefined) query.set("limit", String(params.limit));
+  if (params.offset !== undefined) query.set("offset", String(params.offset));
+
+  return apiFetch(`/workers?${query.toString()}`, {
+    method: "GET",
+    token,
+  });
+}
+
+export function getWorker(workerProfileId: number, token?: string | null) {
+  return apiFetch(`/workers/${workerProfileId}`, {
+    method: "GET",
+    token,
+  });
+}
+
+export function getWorkerCandidates(
+  jobId: number,
+  params: WorkerSearchParams = {},
+  token?: string | null
+) {
+  const query = new URLSearchParams();
+
+  if (params.q) query.set("q", params.q);
+  if (params.skill_id !== undefined) query.set("skill_id", String(params.skill_id));
+  if (params.location_text) query.set("location_text", params.location_text);
+  if (params.availability_status) query.set("availability_status", params.availability_status);
+  if (params.limit !== undefined) query.set("limit", String(params.limit));
+  if (params.offset !== undefined) query.set("offset", String(params.offset));
+
+  return apiFetch(`/jobs/${jobId}/worker-candidates?${query.toString()}`, {
     method: "GET",
     token,
   });
