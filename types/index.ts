@@ -141,3 +141,17 @@ export interface ApiErrorShape {
   };
   detail?: string;
 }
+
+export interface SkillSummary {
+  id: number;
+  name: string;
+  category: string;
+}
+
+export interface WorkerSkill {
+  id: number;
+  skill_id: number;
+  years_experience: number | null;
+  experience_level: number | null;
+  skill?: SkillSummary | null;
+}

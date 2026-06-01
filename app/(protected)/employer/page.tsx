@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 
 import { Card } from "@/components/ui/card";
@@ -49,7 +49,7 @@ export default function EmployerPage() {
         },
     });
 
-    async function load() {
+    const load = useCallback(async function load() {
         if (!token) return;
 
         setError("");
@@ -77,11 +77,18 @@ export default function EmployerPage() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [token, form]);
 
     useEffect(() => {
-        load();
-    }, [token]);
+        if (!token) return;
+
+        // Defer calling load to avoid synchronous setState within the effect
+        // which can trigger cascading renders. Using a microtask ensures
+        // state updates happen after the current render cycle.
+        Promise.resolve().then(() => {
+            void load();
+        });
+    }, [token, load]);
 
     const myJobs = useMemo(() => {
         if (!profile) return [];
@@ -234,6 +241,22 @@ export default function EmployerPage() {
                     {myJobs.length === 0 ? (
                         <p className="text-sm text-neutral-500">No jobs created yet.</p>
                     ) : null}
+                </div>
+            </Card>
+
+            <Card>
+                <h2 className="text-lg font-semibold">Assignments</h2>
+                <p className="mt-2 text-sm text-neutral-600">
+                    Track who accepted, who is active, and what has completed.
+                </p>
+
+                <div className="mt-4 flex flex-wrap gap-3">
+                    <Link href="/employer/assignments">
+                        <Button>Open assignments</Button>
+                    </Link>
+                    <Link href="/applications">
+                        <Button variant="secondary">Full list</Button>
+                    </Link>
                 </div>
             </Card>
         </div>

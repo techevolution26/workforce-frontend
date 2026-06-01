@@ -12,7 +12,11 @@ const ROUTE_RULES: RouteRule[] = [
   { prefix: "/jobs", roles: ALL_ROLES },
   { prefix: "/applications", roles: ALL_ROLES },
   { prefix: "/worker", roles: ["worker", "admin"] },
+  { prefix: "/worker/assignments", roles: ["worker", "admin"] },
+  { prefix: "/worker/jobs", roles: ["worker", "admin"] },
   { prefix: "/employer", roles: ["employer", "admin"] },
+  { prefix: "/employer/assignments", roles: ["employer", "admin"] },
+  { prefix: "/employer/jobs", roles: ["employer", "admin"] },
 ];
 
 export function isRouteAllowed(role: UserRole, pathname: string): boolean {
@@ -38,6 +42,8 @@ export function getNavItems(role: UserRole) {
     return [
       ...common,
       { href: "/worker", label: "Worker hub" },
+      { href: "/worker/jobs", label: "Open jobs" },
+      { href: "/worker/assignments", label: "My assignments" },
     ];
   }
 
@@ -47,6 +53,7 @@ export function getNavItems(role: UserRole) {
       { href: "/employer", label: "Employer hub" },
       { href: "/jobs/new", label: "Create job" },
       { href: "/employer/jobs", label: "My jobs" },
+      { href: "/employer/assignments", label: "Job assignments" },
     ];
   }
 
