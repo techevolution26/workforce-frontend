@@ -239,3 +239,17 @@ export function getWorkerCandidates(
     token,
   });
 }
+
+export function getJobAssignments(jobId: number, token?: string | null) {
+  return apiFetch<Assignment[]>(`/jobs/${jobId}/assignments`, {
+    method: "GET",
+    token,
+  });
+}
+
+export function getSuggestedWorkers(jobId: number, token?: string | null) {
+  return apiFetch(`/jobs/${jobId}/suggested-workers`, {
+    method: "GET",
+    token,
+  });
+}

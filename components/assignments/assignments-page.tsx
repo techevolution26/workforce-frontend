@@ -19,8 +19,8 @@ import {
 import type { Assignment } from "@/types";
 import {
     getAssignmentActions,
-    getStatusLabel,
-    getStatusTone,
+    getAssignmentLabel,
+    getAssignmentTone,
     getTimelineSteps,
     groupAssignments,
 } from "@/lib/assignment-workflow";
@@ -89,6 +89,7 @@ export function AssignmentsPage() {
             const jobTitle = assignment.job?.title?.toLowerCase() || "";
             const jobLocation = assignment.job?.location_text?.toLowerCase() || "";
             const status = assignment.status.toLowerCase();
+
             return (
                 jobTitle.includes(q) ||
                 jobLocation.includes(q) ||
@@ -180,7 +181,7 @@ export function AssignmentsPage() {
 
                         <div className="grid gap-4">
                             {sectionItems.map((assignment) => {
-                                const steps = getTimelineSteps(assignment.status);
+                                const steps = getTimelineSteps(assignment);
                                 const actions = getAssignmentActions(user.role, assignment);
 
                                 return (
@@ -192,13 +193,14 @@ export function AssignmentsPage() {
                                                         <h3 className="text-lg font-semibold">
                                                             {assignment.job?.title || `Assignment #${assignment.id}`}
                                                         </h3>
+
                                                         <span
                                                             className={[
                                                                 "inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium",
-                                                                getStatusTone(assignment.status),
+                                                                getAssignmentTone(assignment),
                                                             ].join(" ")}
                                                         >
-                                                            {getStatusLabel(assignment.status)}
+                                                            {getAssignmentLabel(assignment)}
                                                         </span>
                                                     </div>
 
@@ -289,9 +291,7 @@ export function AssignmentsPage() {
 
                             {sectionItems.length === 0 ? (
                                 <Card>
-                                    <p className="text-sm text-neutral-500">
-                                        No {section} assignments.
-                                    </p>
+                                    <p className="text-sm text-neutral-500">No {section} assignments.</p>
                                 </Card>
                             ) : null}
                         </div>
