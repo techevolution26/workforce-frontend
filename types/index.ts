@@ -119,20 +119,6 @@ export interface JobUpdatePayload extends Partial<JobCreatePayload> {
   status?: JobStatus;
 }
 
-export interface Assignment {
-  id: number;
-  job_id: number;
-  worker_profile_id: number;
-  status: AssignmentStatus;
-  assigned_at: string | null;
-  accepted_at: string | null;
-  rejected_at: string | null;
-  started_at: string | null;
-  completed_at: string | null;
-  cancelled_at: string | null;
-  job?: Job;
-}
-
 export interface ApiErrorShape {
   error?: {
     code?: string;
@@ -154,4 +140,50 @@ export interface WorkerSkill {
   years_experience: number | null;
   experience_level: number | null;
   skill?: SkillSummary | null;
+}
+
+export type AssignmentSource = "application" | "invitation";
+
+export interface JobSummary {
+  id: number;
+  title: string;
+  location_text: string | null;
+  pay_type: PayType;
+  pay_amount: string;
+  status: JobStatus;
+  required_workers: number;
+}
+
+export interface UserSummary {
+  id: number;
+  full_name: string;
+  email: string;
+}
+
+export interface WorkerProfileSummary {
+  id: number;
+  user_id: number;
+  bio: string | null;
+  location_text: string | null;
+  hourly_expected_rate: string | null;
+  availability_status: string;
+  verification_status: string;
+  is_active: boolean;
+  user?: UserSummary | null;
+}
+
+export interface Assignment {
+  id: number;
+  job_id: number;
+  worker_profile_id: number;
+  status: AssignmentStatus;
+  source: AssignmentSource;
+  assigned_at: string | null;
+  accepted_at: string | null;
+  rejected_at: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  job?: JobSummary | null;
+  worker_profile?: WorkerProfileSummary | null;
 }

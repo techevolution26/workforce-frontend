@@ -1,4 +1,4 @@
-import type { Assignment, AssignmentStatus, UserRole } from "@/types";
+import type { Assignment, UserRole } from "@/types";
 
 export type AssignmentPhase = "pending" | "active" | "completed" | "archived";
 
@@ -16,7 +16,8 @@ export function getAssignmentLabel(assignment: Assignment): string {
   if (assignment.status === "cancelled") return "Cancelled";
   if (assignment.started_at) return "In progress";
   if (assignment.status === "accepted") return "Accepted";
-  return "Pending review";
+  if (assignment.source === "invitation") return "Invitation";
+  return "Application";
 }
 
 export function getAssignmentTone(assignment: Assignment): string {
@@ -41,40 +42,53 @@ export function getTimelineSteps(assignment: Assignment) {
 
   return [
     { key: "pending", label: "Requested", done: true, active: phase === "pending" },
-    { key: "accepted", label: "Accepted", done: ["active", "completed"].includes(phase), active: phase === "pending" || phase === "active" },
-    { key: "started", label: "In progress", done: ["active", "completed"].includes(phase), active: phase === "active" },
-    { key: "completed", label: "Completed", done: phase === "completed", active: phase === "completed" },
+    {
+      key: "accepted",
+      label: "Accepted",
+      done: ["active", "completed"].includes(phase),
+      active: phase === "pending" || phase === "active",
+    },
+    {
+      key: "started",
+      label: "In progress",
+      done: ["active", "completed"].includes(phase),
+      active: phase === "active",
+    },
+    {
+      key: "completed",
+      label: "Completed",
+      done: phase === "completed",
+      active: phase === "completed",
+    },
   ];
 }
 
 export function getAssignmentActions(role: UserRole, assignment: Assignment) {
-  const phase = getAssignmentPhase(assignment);
   const actions: Array<"accept" | "reject" | "start" | "complete" | "cancel"> = [];
+  const phase = getAssignmentPhase(assignment);
 
   if (phase === "pending") {
     if (role === "worker") {
-      actions.push("accept", "reject");
+      if (assignment.source === "invitation") {
+        actions.push("accept", "reject");
+      } else {
+        actions.push("cancel");
+      }
     }
+
     if (role === "employer" || role === "admin") {
-      actions.push("cancel");
+      if (assignment.source === "application") {
+        actions.push("accept", "reject");
+      } else {
+        actions.push("cancel");
+      }
     }
+
     return actions;
   }
 
   if (phase === "active") {
-    if (!assignment.started_at) {
-      if (role === "worker" || role === "employer" || role === "admin") {
-        actions.push("start");
-      }
-    }
-    if (assignment.started_at && !assignment.completed_at) {
-      if (role === "worker" || role === "employer" || role === "admin") {
-        actions.push("complete");
-      }
-    }
-    if (role === "worker" || role === "employer" || role === "admin") {
-      actions.push("cancel");
-    }
+    actions.push("start", "complete", "cancel");
     return actions;
   }
 

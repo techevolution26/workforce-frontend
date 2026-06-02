@@ -253,3 +253,24 @@ export function getSuggestedWorkers(jobId: number, token?: string | null) {
     token,
   });
 }
+
+export function getEmployerJobs(token?: string | null) {
+  return apiFetch<Job[]>("/employers/me/jobs", {
+    method: "GET",
+    token,
+  });
+}
+
+export function completeJob(jobId: number, token?: string | null) {
+  return apiFetch<Job>(`/jobs/${jobId}/complete`, {
+    method: "POST",
+    token,
+  });
+}
+
+export function deleteJob(jobId: number, token?: string | null) {
+  return apiFetch<void>(`/jobs/${jobId}`, {
+    method: "DELETE",
+    token,
+  });
+}
